@@ -261,13 +261,13 @@ api_connect(lua_State *lua)
         auth.password = (char *)lua_tostring(lua, -2);
     }
     if (!lua_isnil(lua, -1)) {
-        lua_len(lua, -1);
-        auth.n_tokens = lua_tointeger(lua, -1);
-        lua_pop(lua, 1);
+        //lua_len(lua, -1);
+        auth.n_tokens = lua_objlen(lua, -1);
+        //lua_pop(lua, 1);
 
         if (lua_checkstack(lua, auth.n_tokens)) {
             int i;
-            int table_index = lua_absindex(lua, -1);
+            int table_index = lua_gettop(lua);
             auth.tokens = lua_newuserdata(lua, sizeof(char *) * auth.n_tokens);
             lua_pushnil(lua);
 
@@ -275,13 +275,15 @@ api_connect(lua_State *lua)
                 if (!lua_next(lua, table_index)) {
                     break;
                 }
-                auth.tokens[i] = (char *)lua_tostring(lua, -1);
+                auth.tokens[i] = (char*)lua_tostring(lua,-1);
+//                printf("Added token %s\n",tkn);
                 lua_insert(lua, -2);
             }
 
             auth.n_tokens = i;
         } else {
             /* TODO:  notify the user of this */
+            printf("Failed to set tokens!\n");
             auth.n_tokens = 0;
         }
     }
@@ -303,8 +305,8 @@ api_resolveHashes(lua_State *lua)
     MumbleProto__RequestBlob msg = MUMBLE_PROTO__REQUEST_BLOB__INIT;
     int i;
 
-    if (!lua_isnil(lua, 1) && luaL_len(lua, 1) > 0) {
-        msg.n_session_texture = luaL_len(lua, 1);
+    if (!lua_isnil(lua, 1) && lua_objlen(lua, 1) > 0) {
+        msg.n_session_texture = lua_objlen(lua, 1);
         msg.session_texture = lua_newuserdata(lua,
             sizeof(uint32_t) * msg.n_session_texture);
         lua_pushnil(lua);
@@ -318,8 +320,8 @@ api_resolveHashes(lua_State *lua)
         lua_pop(lua, 1);
     }
 
-    if (!lua_isnil(lua, 2) && luaL_len(lua, 2) > 0) {
-        msg.n_session_comment = luaL_len(lua, 2);
+    if (!lua_isnil(lua, 2) && lua_objlen(lua, 2) > 0) {
+        msg.n_session_comment = lua_objlen(lua, 2);
         msg.session_comment = lua_newuserdata(lua,
             sizeof(uint32_t) * msg.n_session_comment);
         lua_pushnil(lua);
@@ -333,8 +335,8 @@ api_resolveHashes(lua_State *lua)
         lua_pop(lua, 1);
     }
 
-    if (!lua_isnil(lua, 3) && luaL_len(lua, 3) > 0) {
-        msg.n_channel_description = luaL_len(lua, 3);
+    if (!lua_isnil(lua, 3) && lua_objlen(lua, 3) > 0) {
+        msg.n_channel_description = lua_objlen(lua, 3);
         msg.channel_description = lua_newuserdata(lua,
             sizeof(uint32_t) * msg.n_channel_description);
         lua_pushnil(lua);

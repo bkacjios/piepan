@@ -40,7 +40,7 @@ function piepan.internal.events.onLoadScript(argument, ptr)
                 type = type,
                 xpcall = xpcall,
 
-                bit32 = bit32,
+                bit32 = require'bit',
                 coroutine = coroutine,
                 debug = debug,
                 io = io,

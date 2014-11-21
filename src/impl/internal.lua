@@ -34,6 +34,7 @@ function piepan.internal.initialize(tbl)
             for line in file:lines() do
                 if line ~= "" then
                     table.insert(tokens, line)
+                --    print(line)
                 end
             end
             file:close()

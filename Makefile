@@ -1,4 +1,4 @@
-CFLAGS = `pkg-config --libs --cflags libssl lua libprotobuf-c opus vorbis vorbisfile` -lev -pthread
+CFLAGS = `pkg-config --libs --cflags libssl luajit libprotobuf-c opus vorbis vorbisfile` -lev -pthread -I/usr/local/include/luajit-2.0/
 
 LUAFILES = src/impl/piepan.lua \
            src/impl/internal.lua \
@@ -24,7 +24,7 @@ src/piepan_impl.c: src/piepan_impl.luac
 	xxd -i $< $@
 
 src/piepan_impl.luac: src/piepan_impl.lua
-	luac -o $@ $<
+	luajit -b  $< $@
 
 src/piepan_impl.lua: $(LUAFILES)
 	cat $(LUAFILES) > $@

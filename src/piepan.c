@@ -209,7 +209,7 @@ main(int argc, char *argv[])
     }
     luaL_openlibs(lua);
     if (luaL_loadbuffer(lua, (const char *)src_piepan_impl_luac,
-            src_piepan_impl_luac_len, "piepan_impl") != LUA_OK) {
+            src_piepan_impl_luac_len, "piepan_impl") != 0) {
         fprintf(stderr, "%s: could not load piepan implementation\n", PIEPAN_NAME);
         return 1;
     }
