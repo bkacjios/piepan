@@ -58,6 +58,8 @@ The following section describes the API that is available for script authors.  P
 - `void send(self, string message)`: sends a text message to the user.
 - `void kick(self [, string reason])`: kicks the user from the server with an optional reason.
 - `void ban(self [, string reason])`: bans the user from the server with an optional reason.
+- `void mute(self, bool muted)`: mute or unmute a user.
+- `void deafen(self, bool deafened)`: deafen or undefen a user.
 - `void setComment(self [, string comment])`: sets the user's comment to `comment`.
 - `void setTexture(self, string bytes)`: sets the user's texture to the image stored in `bytes`.
 - `void register(self)`: registers the user with the connected server.
@@ -111,6 +113,8 @@ The following section describes the API that is available for script authors.  P
 
 #### `piepan.Audio`
 
+- `void setVolume(float volume)`: sets the global volume.
+- `float getVolume()`: gets the global volume.
 - `void stop()`: stops the currently playing audio stream.
 - `bool isPlaying()`: returns true if an audio stream is currently playing.
 
@@ -137,6 +141,8 @@ The following section describes the API that is available for script authors.  P
 #### `piepan.UserChange`
 
 - `piepan.User user`: the user that changed.
+- `piepan.User actor`: the user that initiated that change.
+- `piepan.channel changedChannelFrom`: if a user changed channel, the channel in which they moved from.
 - `bool isConnected`:  if the user connected to the server.
 - `bool isDisconnected`: if the user disconnected from the server.
 - `bool isChangedChannel`:  if the user moved to a new channel.
