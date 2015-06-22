@@ -16,6 +16,16 @@ function piepan.User:moveTo(channel)
     piepan.internal.api.userMoveTo(self, channel.id)
 end
 
+function piepan.User:mute(yesno)
+    assert(self ~= nil, "self cannot be nil")
+    piepan.internal.api.userMute(self, yesno)
+end
+
+function piepan.User:deafen(yesno)
+    assert(self ~= nil, "self cannot be nil")
+    piepan.internal.api.userDeafen(self, yesno)
+end
+
 function piepan.User:kick(message)
     assert(self ~= nil, "self cannot be nil")
 

@@ -18,6 +18,7 @@ piepan = {
     Permissions = {},
     Thread = {},
     Timer = {},
+    Stats = {},
 
     server = {
         -- has the client been fully synced with the server yet?
@@ -72,3 +73,4 @@ piepan.ChannelChange.__index = piepan.ChannelChange
 piepan.PermissionDenied.__index = piepan.PermissionDenied
 piepan.Permissions.__index = piepan.Permissions
 piepan.Timer.__index = piepan.Timer
+piepan.Stats.__index = piepan.Stats

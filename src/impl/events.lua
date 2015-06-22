@@ -5,6 +5,15 @@
 -- License: MIT (see LICENSE)
 --
 
+function piepan.internal.events.onUserStats(obj)
+    local stats = {}
+    setmetatable(stats, piepan.Stats)
+    print("ON USER STATS INTERNAL")
+    for k,v in pairs(obj) do
+        print(k,v)
+    end
+end
+
 function piepan.internal.events.onServerConfig(obj)
     if obj.allowHtml ~= nil then
         piepan.server.allowHtml = obj.allowHtml
@@ -60,7 +69,7 @@ function piepan.internal.events.onMessage(obj)
 end
 
 function piepan.internal.events.onUserChange(obj)
-    local user
+    local user, actor
     local event = {}
     setmetatable(event, piepan.onUserChange)
     if piepan.internal.users[obj.session] == nil then
@@ -82,6 +91,9 @@ function piepan.internal.events.onUserChange(obj)
 
     local resolving = {}
 
+    if obj.actor ~= nil then
+        event.actor = piepan.internal.users[obj.actor]
+    end
     if obj.userId ~= nil then
         user.userId = obj.userId
     end
@@ -89,6 +101,7 @@ function piepan.internal.events.onUserChange(obj)
         user.name = obj.name
     end
     if obj.channelId ~= nil then
+        event.changedChannelFrom = user.channel
         user.channel = piepan.channels[obj.channelId]
         event.isChangedChannel = true
     end

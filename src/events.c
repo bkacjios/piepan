@@ -118,13 +118,15 @@ socket_read_event(struct ev_loop *loop, ev_io *w, int revents)
     }
 }
 
+double globalvolume = 1;
+
 static void
 audio_transmission_event_filter(float **pcm, long channels, long samples, void *param) {
     AudioTransmission *at = (AudioTransmission *)param;
     int channel, sample;
     for (channel = 0; channel < channels; channel++) {
         for (sample = 0; sample < samples; sample++) {
-            pcm[channel][sample] *= at->volume;
+            pcm[channel][sample] *= at->volume * globalvolume;
         }
     }
 }

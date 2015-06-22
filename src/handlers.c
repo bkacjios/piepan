@@ -8,6 +8,43 @@
  * server.
  */
 
+ void handler_user_stats(lua_State *lua, Packet *packet)
+{
+    MumbleProto__UserStats *stats = 
+        mumble_proto__user_stats__unpack(NULL, packet->length, packet->buffer);
+    if (stats == NULL) {
+        return;
+    }
+
+    lua_getglobal(lua, "piepan");
+    lua_getfield(lua, -1, "internal");
+    lua_getfield(lua, -1, "events");
+    lua_getfield(lua, -1, "onUserStats");
+    if (!lua_isfunction(lua, -1)) {
+        mumble_proto__user_stats__free_unpacked(stats, NULL);
+        lua_settop(lua, 0);
+        return;
+    }
+    lua_newtable(lua);
+
+    lua_pushinteger(lua, stats->session);
+    lua_setfield(lua, -2, "session");
+
+    if (stats->has_idlesecs) {
+        lua_pushinteger(lua, stats->idlesecs);
+        lua_setfield(lua, -2, "idlesecs");
+    }
+    if (stats->has_address) {
+        lua_pushlstring(lua, (char *)stats->address.data,
+            stats->address.len);
+        lua_setfield(lua, -2, "address");
+    }
+    lua_call(lua, 1, 0);
+    lua_settop(lua, 0);
+
+    mumble_proto__user_stats__free_unpacked(stats, NULL);
+}
+
 void
 handler_server_sync(lua_State *lua, Packet *packet)
 {

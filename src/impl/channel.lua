@@ -48,7 +48,7 @@ function piepan.Channel:play(info, callback)
     end
 
     local filename
-    local volume = 1.0
+    local volume = 1
     if type(info) == "table" then
         filename = info.filename
         if info.volume ~= nil then
@@ -81,6 +81,8 @@ function piepan.internal.events.onAudioFinished()
     else
         piepan.internal.currentAudio = nil
     end
+
+    piepan.internal.triggerEvent("onAudioFinished")
 end
 
 function piepan.Channel:send(message)

@@ -28,7 +28,8 @@ enum {
     PACKET_USERREMOVE       = 8,
     PACKET_USERSTATE        = 9,
     PACKET_TEXTMESSAGE      = 11,
-    PACKET_REQUESTBLOB      = 23
+    PACKET_REQUESTBLOB      = 23,
+    PACKET_USERSTATS        = 24,
 };
 
 /*
@@ -91,6 +92,7 @@ typedef struct {
  */
 #define sendPacket(type, message) sendPacketEx(type, message, 0)
 int sendPacketEx(const int type, const void *message, const int length);
+double globalvolume;
 
 typedef void (*Packet_Handler_Func)(lua_State *lua, Packet *packet);
 void user_timer_event(struct ev_loop *loop, struct ev_timer *w, int revents);

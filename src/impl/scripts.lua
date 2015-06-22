@@ -15,40 +15,10 @@ function piepan.internal.events.onLoadScript(argument, ptr)
             filename = argument,
             ptr = ptr,
             environment = {
-                print = print,
-                assert = assert,
-                collectgarbage = collectgarbage,
-                dofile = dofile,
-                error = error,
-                getmetatable = getmetatable,
-                ipairs = ipairs,
-                load = load,
-                loadfile = loadfile,
-                next = next,
-                pairs = pairs,
-                pcall = pcall,
-                print = print,
-                rawequal = rawequal,
-                rawget = rawget,
-                rawlen = rawlen,
-                rawset = rawset,
-                require = require,
-                select = select,
-                setmetatable = setmetatable,
-                tonumber = tonumber,
-                tostring = tostring,
-                type = type,
-                xpcall = xpcall,
-
-                bit32 = require'bit',
-                coroutine = coroutine,
-                debug = debug,
-                io = io,
-                math = math,
-                os = os,
-                package = package,
-                string = string,
-                table = table
+                _G = _G,
+                __index = _G,
+                __newindex = _G,
+                client = setmetatable({}, piepan.internal.meta)
             }
         }
     elseif type(argument) == "number" then
@@ -58,20 +28,19 @@ function piepan.internal.events.onLoadScript(argument, ptr)
         return false, "invalid argument"
     end
 
-    local script, message = loadfile(entry.filename, "bt", entry.environment)
+    local script, message = loadfile(entry.filename, "bt")
     if script == nil then
         return false, message
     end
-    entry.environment.piepan = {}
+
+    setfenv(script, setmetatable(entry.environment, entry.environment))
+
     local status, message = pcall(script)
     if status == false then
         return false, message
     end
 
     piepan.scripts[index] = entry
-    if type(entry.environment.piepan) == "table" then
-        setmetatable(entry.environment.piepan, piepan.internal.meta)
-    end
 
     return true, index, ptr
 end
@@ -81,7 +50,7 @@ end
 --
 function piepan.internal.triggerEvent(name, ...)
     for _,script in pairs(piepan.scripts) do
-        local func = rawget(script.environment.piepan, name)
+        local func = rawget(script.environment.client, name)
         if type(func) == "function" then
             piepan.internal.runCallback(func, ...)
         end

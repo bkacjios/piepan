@@ -9,6 +9,7 @@
  */
 
 #include <pthread.h>
+#include <sys/utsname.h>
 
 int
 api_User_send(lua_State *lua)
@@ -62,6 +63,34 @@ api_User_moveTo(lua_State *lua)
     MumbleProto__UserState msg = MUMBLE_PROTO__USER_STATE__INIT;
     msg.has_channel_id = true;
     msg.channel_id = lua_tointeger(lua, -1);
+    msg.has_session = true;
+    lua_getfield(lua, -2, "session");
+    msg.session = lua_tointeger(lua, -1);
+    sendPacket(PACKET_USERSTATE, &msg);
+    return 0;
+}
+
+int
+api_User_mute(lua_State *lua)
+{
+    /* [self, int channel_id] */
+    MumbleProto__UserState msg = MUMBLE_PROTO__USER_STATE__INIT;
+    msg.has_mute = true;
+    msg.mute = lua_toboolean(lua, -1);
+    msg.has_session = true;
+    lua_getfield(lua, -2, "session");
+    msg.session = lua_tointeger(lua, -1);
+    sendPacket(PACKET_USERSTATE, &msg);
+    return 0;
+}
+
+int
+api_User_deafen(lua_State *lua)
+{
+    /* [self, int channel_id] */
+    MumbleProto__UserState msg = MUMBLE_PROTO__USER_STATE__INIT;
+    msg.has_deaf = true;
+    msg.deaf = lua_toboolean(lua, -1);
     msg.has_session = true;
     lua_getfield(lua, -2, "session");
     msg.session = lua_tointeger(lua, -1);
@@ -240,6 +269,20 @@ api_Audio_stop(lua_State *lua)
 }
 
 int
+api_Audio_setVolume(lua_State *lua)
+{
+    globalvolume = lua_tonumber(lua, 1);
+    return 0;
+}
+
+int
+api_Audio_getVolume(lua_State *lua)
+{
+    lua_pushnumber(lua, globalvolume);
+    return 1;
+}
+
+int
 api_disconnect(lua_State *lua)
 {
     kill(0, SIGINT);
@@ -287,11 +330,15 @@ api_connect(lua_State *lua)
             auth.n_tokens = 0;
         }
     }
+
+    struct utsname unameData;
+    uname(&unameData);
+
     version.has_version = true;
-    version.version = 1 << 16 | 2 << 8 | 6;
+    version.version = 1 << 16 | 2 << 8 | 8;
     version.release = PIEPAN_NAME " " PIEPAN_VERSION;
-    version.os = "Unknown";
-    version.os_version = "Unknown";
+    version.os = unameData.sysname;
+    version.os_version = unameData.release;
 
     sendPacket(PACKET_VERSION, &version);
     sendPacket(PACKET_AUTHENTICATE, &auth);
@@ -367,6 +414,10 @@ api_init(lua_State *lua)
     lua_setfield(lua, -2, "userBan");
     lua_pushcfunction(lua, api_User_moveTo);
     lua_setfield(lua, -2, "userMoveTo");
+    lua_pushcfunction(lua, api_User_mute);
+    lua_setfield(lua, -2, "userMute");
+    lua_pushcfunction(lua, api_User_deafen);
+    lua_setfield(lua, -2, "userDeafen");
     lua_pushcfunction(lua, api_User_setComment);
     lua_setfield(lua, -2, "userSetComment");
     lua_pushcfunction(lua, api_User_setTexture);
@@ -393,6 +444,11 @@ api_init(lua_State *lua)
 
     lua_pushcfunction(lua, api_Audio_stop);
     lua_setfield(lua, -2, "audioStop");
+
+    lua_pushcfunction(lua, api_Audio_setVolume);
+    lua_setfield(lua, -2, "audioSetVolume");
+    lua_pushcfunction(lua, api_Audio_getVolume);
+    lua_setfield(lua, -2, "audioGetVolume");
 
     lua_pushcfunction(lua, api_connect);
     lua_setfield(lua, -2, "connect");
