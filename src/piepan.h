@@ -28,8 +28,9 @@ enum {
     PACKET_USERREMOVE       = 8,
     PACKET_USERSTATE        = 9,
     PACKET_TEXTMESSAGE      = 11,
+    PACKET_VOICETARGET      = 19,
+    PACKET_USERSTATS        = 22,
     PACKET_REQUESTBLOB      = 23,
-    PACKET_USERSTATS        = 24,
 };
 
 /*

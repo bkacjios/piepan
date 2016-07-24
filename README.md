@@ -142,11 +142,21 @@ The following section describes the API that is available for script authors.  P
 
 - `piepan.User user`: the user that changed.
 - `piepan.User actor`: the user that initiated that change.
-- `piepan.channel changedChannelFrom`: if a user changed channel, the channel in which they moved from.
+- `piepan.channel channelFrom`: if a user changed channel, the channel in which they moved from.
 - `bool isConnected`:  if the user connected to the server.
 - `bool isDisconnected`: if the user disconnected from the server.
 - `bool isChangedChannel`:  if the user moved to a new channel.
 - `bool isChangedComment`: if the user's comment changed.
+
+#### `piepan.Stats`
+
+Table containing information about the user.  This table may have the fields:
+
+- `int session`: the session ID of the user.
+- `bool stats_only`: whether or not only stats are available
+- `table certificates`: the current certificates of the user
+- `table from_client`: packet information from the client
+- `table from_server`: packet information from the server
 
 #### `piepan.ChannelChange`
 
@@ -270,6 +280,10 @@ Called when a text message `message` is received.
 #### `piepan.onUserChange(piepan.UserChange event)`
 
 Called when a user's status changes.
+
+#### `piepan.onUserStats(piepan.UserStats event)`
+
+Called when a user's `stats` are received.
 
 #### `piepan.onChannelChange(piepan.ChannelChange event)`
 

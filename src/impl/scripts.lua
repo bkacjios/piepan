@@ -14,12 +14,6 @@ function piepan.internal.events.onLoadScript(argument, ptr)
         entry = {
             filename = argument,
             ptr = ptr,
-            environment = {
-                _G = _G,
-                __index = _G,
-                __newindex = _G,
-                client = setmetatable({}, piepan.internal.meta)
-            }
         }
     elseif type(argument) == "number" then
         index = argument
@@ -32,8 +26,6 @@ function piepan.internal.events.onLoadScript(argument, ptr)
     if script == nil then
         return false, message
     end
-
-    setfenv(script, setmetatable(entry.environment, entry.environment))
 
     local status, message = pcall(script)
     if status == false then
@@ -50,7 +42,7 @@ end
 --
 function piepan.internal.triggerEvent(name, ...)
     for _,script in pairs(piepan.scripts) do
-        local func = rawget(script.environment.client, name)
+        local func = piepan[name]
         if type(func) == "function" then
             piepan.internal.runCallback(func, ...)
         end

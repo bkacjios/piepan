@@ -9,30 +9,30 @@
  */
 
 static Packet_Handler_Func packet_handler[26] = {
-    /*  0 */ NULL,
-    /*  1 */ NULL,
-    /*  2 */ NULL,
-    /*  3 */ NULL,
-    /*  4 */ NULL,
+    /*  0 */ NULL, // Version
+    /*  1 */ NULL, // UDPTunnel
+    /*  2 */ NULL, // Authenticate
+    /*  3 */ NULL, // Ping
+    /*  4 */ NULL, // Reject
     /*  5 */ handler_server_sync,
     /*  6 */ handler_channel_remove,
     /*  7 */ handler_channel_state,
     /*  8 */ handler_user_remove,
     /*  9 */ handler_user_state,
-    /* 10 */ NULL,
+    /* 10 */ NULL, // Banlist
     /* 11 */ handler_text_message,
     /* 12 */ handler_permissiondenied,
-    /* 13 */ NULL,
-    /* 14 */ NULL,
-    /* 15 */ NULL,
-    /* 16 */ NULL,
-    /* 17 */ NULL,
-    /* 18 */ NULL,
-    /* 19 */ NULL,
-    /* 20 */ NULL,
-    /* 21 */ NULL,
-    /* 22 */ NULL,
-    /* 23 */ NULL,
+    /* 13 */ NULL, // ACL
+    /* 14 */ NULL, // QueryUsers
+    /* 15 */ NULL, // CryptSetup
+    /* 16 */ NULL, // ContextActionAdd
+    /* 17 */ NULL, // Context Action
+    /* 18 */ NULL, // UserList
+    /* 19 */ NULL, // VoiceTarget
+    /* 20 */ NULL, // PermissionQuery
+    /* 21 */ NULL, // CodecVersion
+    /* 22 */ handler_user_stats,
+    /* 23 */ NULL, // RequestBlob
     /* 24 */ handler_server_config,
     /* 25 */ NULL,
 };

@@ -123,6 +123,19 @@ api_User_register(lua_State *lua)
 }
 
 int
+api_User_request_stats(lua_State *lua)
+{
+    /* [self] */
+    MumbleProto__UserStats msg = MUMBLE_PROTO__USER_STATS__INIT;
+    msg.stats_only = lua_toboolean(lua, -1);
+    msg.has_session = true;
+    lua_getfield(lua, -2, "session");
+    msg.session = lua_tointeger(lua, -1);
+    sendPacket(PACKET_USERSTATS, &msg);
+    return 0;
+}
+
+int
 api_User_setTexture(lua_State *lua)
 {
     /* [self, texture] */
@@ -283,6 +296,19 @@ api_Audio_getVolume(lua_State *lua)
 }
 
 int
+api_Audio_setTarget(lua_State *lua)
+{
+    luaL_checktype(lua, 1, LUA_TTABLE);
+
+    MumbleProto__VoiceTarget target = MUMBLE_PROTO__VOICE_TARGET__TARGET__INIT;
+
+    lua_getfield(lua, 1, "session");
+
+    sendPacket(PACKET_VOICETARGET, &target);
+    return 0;
+}
+
+int
 api_disconnect(lua_State *lua)
 {
     kill(0, SIGINT);
@@ -424,6 +450,8 @@ api_init(lua_State *lua)
     lua_setfield(lua, -2, "userSetTexture");
     lua_pushcfunction(lua, api_User_register);
     lua_setfield(lua, -2, "userRegister");
+    lua_pushcfunction(lua, api_User_request_stats);
+    lua_setfield(lua, -2, "userRequestStats");
 
     lua_pushcfunction(lua, api_Channel_play);
     lua_setfield(lua, -2, "channelPlay");
@@ -444,11 +472,12 @@ api_init(lua_State *lua)
 
     lua_pushcfunction(lua, api_Audio_stop);
     lua_setfield(lua, -2, "audioStop");
-
     lua_pushcfunction(lua, api_Audio_setVolume);
     lua_setfield(lua, -2, "audioSetVolume");
     lua_pushcfunction(lua, api_Audio_getVolume);
     lua_setfield(lua, -2, "audioGetVolume");
+    lua_pushcfunction(lua, api_Audio_setTarget);
+    lua_setfield(lua, -2, "audioSetTarget");
 
     lua_pushcfunction(lua, api_connect);
     lua_setfield(lua, -2, "connect");

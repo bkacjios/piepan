@@ -57,8 +57,12 @@ end
 
 function piepan.User:register()
     assert(self ~= nil, "self cannot be nil")
-
     piepan.internal.api.userRegister(self)
+end
+
+function piepan.User:requestStats(stats_only)
+    assert(self ~= nil, "self cannot be nil")
+    piepan.internal.api.userRequestStats(self, stats_only)
 end
 
 function piepan.User:resolveHashes()

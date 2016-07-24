@@ -27,18 +27,145 @@
     }
     lua_newtable(lua);
 
-    lua_pushinteger(lua, stats->session);
-    lua_setfield(lua, -2, "session");
+    if (stats->has_session) {
+        lua_pushinteger(lua, stats->session);
+        lua_setfield(lua, -2, "session");
+    }
+
+    if (stats->has_stats_only) {
+        lua_pushboolean(lua, stats->stats_only);
+        lua_setfield(lua, -2, "stats_only");
+    }
+
+    lua_newtable(lua);
+    int i;
+    for ( i=0; i < stats->n_certificates; i++) {
+        lua_pushinteger(lua, i);
+        lua_pushlstring(lua, (char *)stats->certificates[i].data, stats->certificates[i].len);
+        lua_settable(lua, -3);
+    }
+    lua_setfield(lua, -2, "certificates");
+
+    lua_newtable(lua);
+        if (stats->from_client->has_good) {
+            lua_pushinteger(lua, stats->from_client->good);
+            lua_setfield(lua, -2, "good");
+        }
+        if (stats->from_client->has_late) {
+            lua_pushinteger(lua, stats->from_client->late);
+            lua_setfield(lua, -2, "late");
+        }
+        if (stats->from_client->has_lost) {
+            lua_pushinteger(lua, stats->from_client->lost);
+            lua_setfield(lua, -2, "lost");
+        }
+        if (stats->from_client->has_resync) {
+            lua_pushinteger(lua, stats->from_client->resync);
+            lua_setfield(lua, -2, "resync");
+        }
+    lua_setfield(lua, -2, "from_client");
+
+    lua_newtable(lua);
+        if (stats->from_server->has_good) {
+            lua_pushinteger(lua, stats->from_server->good);
+            lua_setfield(lua, -2, "good");
+        }
+        if (stats->from_server->has_late) {
+            lua_pushinteger(lua, stats->from_server->late);
+            lua_setfield(lua, -2, "late");
+        }
+        if (stats->from_server->has_lost) {
+            lua_pushinteger(lua, stats->from_server->lost);
+            lua_setfield(lua, -2, "lost");
+        }
+        if (stats->from_server->has_resync) {
+            lua_pushinteger(lua, stats->from_server->resync);
+            lua_setfield(lua, -2, "resync");
+        }
+    lua_setfield(lua, -2, "from_server");
+
+    if (stats->has_udp_packets) {
+        lua_pushinteger(lua, stats->udp_packets);
+        lua_setfield(lua, -2, "udp_packets");
+    }
+
+    if (stats->has_tcp_packets) {
+        lua_pushinteger(lua, stats->tcp_packets);
+        lua_setfield(lua, -2, "tcp_packets");
+    }
+
+    if (stats->has_udp_ping_avg) {
+        lua_pushinteger(lua, stats->udp_ping_avg);
+        lua_setfield(lua, -2, "udp_ping_avg");
+    }
+
+    if (stats->has_udp_ping_var) {
+        lua_pushinteger(lua, stats->udp_ping_var);
+        lua_setfield(lua, -2, "udp_ping_var");
+    }
+
+    if (stats->has_tcp_ping_avg) {
+        lua_pushinteger(lua, stats->tcp_ping_avg);
+        lua_setfield(lua, -2, "tcp_ping_avg");
+    }
+
+    if (stats->has_tcp_ping_var) {
+        lua_pushinteger(lua, stats->tcp_ping_var);
+        lua_setfield(lua, -2, "tcp_ping_var");
+    }
+
+    lua_newtable(lua);
+        if (stats->version->has_version) {
+            lua_pushinteger(lua, stats->version->version);
+            lua_setfield(lua, -2, "version");
+        }
+        lua_pushstring(lua, stats->version->release);
+        lua_setfield(lua, -2, "release");
+        lua_pushstring(lua, stats->version->os);
+        lua_setfield(lua, -2, "os");
+        lua_pushstring(lua, stats->version->os_version);
+        lua_setfield(lua, -2, "os_version");
+    lua_setfield(lua, -2, "version");
+
+    lua_newtable(lua);
+    int j;
+    for ( i=0; j < stats->n_celt_versions; j++) {
+        lua_pushinteger(lua, j);
+        lua_pushinteger(lua, stats->celt_versions[j]);
+        lua_settable(lua, -3);
+    }
+    lua_setfield(lua, -2, "celt_versions");
+
+    if (stats->has_address) {
+        lua_pushlstring(lua, (char *)stats->address.data, stats->address.len);
+        lua_setfield(lua, -2, "address");
+    }
+
+    if (stats->has_bandwidth) {
+        lua_pushinteger(lua, stats->bandwidth);
+        lua_setfield(lua, -2, "bandwidth");
+    }
+
+    if (stats->has_onlinesecs) {
+        lua_pushinteger(lua, stats->onlinesecs);
+        lua_setfield(lua, -2, "onlinesecs");
+    }
 
     if (stats->has_idlesecs) {
         lua_pushinteger(lua, stats->idlesecs);
         lua_setfield(lua, -2, "idlesecs");
     }
-    if (stats->has_address) {
-        lua_pushlstring(lua, (char *)stats->address.data,
-            stats->address.len);
-        lua_setfield(lua, -2, "address");
+
+    if (stats->has_strong_certificate) {
+        lua_pushboolean(lua, stats->strong_certificate);
+        lua_setfield(lua, -2, "strong_certificate");
     }
+
+    if (stats->has_opus) {
+        lua_pushboolean(lua, stats->opus);
+        lua_setfield(lua, -2, "opus");
+    }
+
     lua_call(lua, 1, 0);
     lua_settop(lua, 0);
 

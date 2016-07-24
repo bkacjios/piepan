@@ -84,6 +84,12 @@ sendPacketEx(const int type, const void *message, const int length)
         case PACKET_USERSTATE:
             payload_size = mumble_proto__user_state__get_packed_size(message);
             break;
+        case PACKET_VOICETARGET:
+            payload_size = mumble_proto__voice_target__get_packed_size(message);
+            break;
+        case PACKET_USERSTATS:
+            payload_size = mumble_proto__user_stats__get_packed_size(message);
+            break;
         case PACKET_REQUESTBLOB:
             payload_size = mumble_proto__request_blob__get_packed_size(message);
             break;
@@ -122,6 +128,12 @@ sendPacketEx(const int type, const void *message, const int length)
                 break;
             case PACKET_USERSTATE:
                 mumble_proto__user_state__pack(message, packet_out.buffer + 6);
+                break;
+            case PACKET_VOICETARGET:
+                mumble_proto__voice_target__pack(message, packet_out.buffer + 6);
+                break;
+            case PACKET_USERSTATS:
+                mumble_proto__user_stats__pack(message, packet_out.buffer + 6);
                 break;
             case PACKET_REQUESTBLOB:
                 mumble_proto__request_blob__pack(message, packet_out.buffer + 6);

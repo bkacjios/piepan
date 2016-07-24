@@ -6,12 +6,12 @@
 --
 
 function piepan.internal.events.onUserStats(obj)
-    local stats = {}
-    setmetatable(stats, piepan.Stats)
-    print("ON USER STATS INTERNAL")
-    for k,v in pairs(obj) do
-        print(k,v)
-    end
+    local event = {
+        user = piepan.internal.users[obj.session],
+        stats = setmetatable(obj, piepan.Stats),
+    }
+    setmetatable(event, piepan.UserStats)
+    piepan.internal.triggerEvent("onUserStats", event)
 end
 
 function piepan.internal.events.onServerConfig(obj)
@@ -71,7 +71,7 @@ end
 function piepan.internal.events.onUserChange(obj)
     local user, actor
     local event = {}
-    setmetatable(event, piepan.onUserChange)
+    setmetatable(event, piepan.UserChange)
     if piepan.internal.users[obj.session] == nil then
         if obj.name == nil then
             return
@@ -101,7 +101,7 @@ function piepan.internal.events.onUserChange(obj)
         user.name = obj.name
     end
     if obj.channelId ~= nil then
-        event.changedChannelFrom = user.channel
+        event.channelFrom = user.channel
         user.channel = piepan.channels[obj.channelId]
         event.isChangedChannel = true
     end
@@ -180,7 +180,7 @@ end
 
 function piepan.internal.events.onUserRemove(obj)
     local event = {}
-    setmetatable(event, piepan.onUserChange)
+    setmetatable(event, piepan.UserChange)
     if piepan.internal.users[obj.session] ~= nil then
         -- TODO:  remove reference from Channel -> User?
         local name = piepan.internal.users[obj.session].name
@@ -203,7 +203,7 @@ function piepan.internal.events.onChannelRemove(obj)
     if channel == nil then
         return
     end
-    setmetatable(event, piepan.onChannelChange)
+    setmetatable(event, piepan.ChannelChange)
     event.channel = channel
 
     if channel.parent ~= nil then
@@ -228,7 +228,7 @@ end
 function piepan.internal.events.onChannelState(obj)
     local channel
     local event = {}
-    setmetatable(event, piepan.onChannelChange)
+    setmetatable(event, piepan.ChannelChange)
     if piepan.channels[obj.channelId] == nil then
         channel = {
             id = obj.channelId,
